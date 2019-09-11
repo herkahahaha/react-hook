@@ -6,7 +6,7 @@ this project was my case studies with react HOC and Context API
 but still missing 'useEffect', its fasting cool
 and we also to build custom hooks
 
-['you can learn from here', 'thenetninja'] (https://www.youtube.com/watch?v=6RhOzQciVwI&list=PL4cUxeGkcC9hNokByJilPg5g9m2APUePI)
+[you can learn from here, thenetninja] (https://www.youtube.com/watch?v=6RhOzQciVwI&list=PL4cUxeGkcC9hNokByJilPg5g9m2APUePI)
 
 ### `npm start`
 
