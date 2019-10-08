@@ -112,13 +112,15 @@ export default BookContextProvider;
 
 - NewBook.js
 
-```js{2,7}
+```js
 const NewBook = () => {
+  // here
   const { dispatch } = useContext(BookContext);
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const handleSubmit = e => {
     e.preventDefault();
+    // here
     dispatch({ type: "ADD_BOOK", book: { title, author } });
     setTitle("");
     setAuthor("");
@@ -127,14 +129,16 @@ const NewBook = () => {
 
 - bookDetails
 
-```js{6,8}
+```js
 import React, { useContext } from "react";
 import { BookContext } from "../context/bookContext";
 
 // parsing props book
 const BookDetails = ({ book }) => {
+  // here
   const { dispatch } = useContext(BookContext);
   return (
+    //here
     <li onClick={() => dispatch({ type: "REMOVE_BOOK", id: book.id })}>
       <div className="title">{book.title}</div>
       <div className="author">{book.author}</div>
