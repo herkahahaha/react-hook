@@ -4,6 +4,7 @@ import { bookReducer } from "../reducer/bookReducer";
 export const BookContext = createContext();
 
 const BookContextProvider = props => {
+  // here we go to use dispatch from reducer
   const [books, dispatch] = useReducer(bookReducer, [], () => {
     // add saving data in our browser
     const localData = localStorage.getItem("books");

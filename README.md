@@ -15,13 +15,45 @@ info lebih lanjut:<br/>
 ### Book-App
 
 ```
-branch: master (basic)
 branch: custom (next level)
+        |--- useReducer
+        |--- useEffect
+        |--- saving data in localstorage
+```
+
+**reducer**<br/>
+
+- bookReducer.js <br/>
+  sebagai file yang menampung fungsi create dan delete data yg sebelumnya di file bookContext.js didalam folder context
+
+```js
+// add reducer
+import uuid from "uuid/v1";
+
+export const bookReducer = (state, action) => {
+  switch (action.type) {
+    // add
+    case "ADD_BOOK":
+      return [
+        ...state,
+        {
+          title: action.book.title,
+          author: action.book.author,
+          id: uuid()
+        }
+      ];
+    // delete
+    case "REMOVE_BOOK":
+      return state.filter(book => book.id !== action.id);
+    default:
+      return state;
+  }
+};
 ```
 
 **Context**<br/>
 
-- bookContext.js
+- bookContext.js (before)
 
 ```js {4}
 import React, { createContext, useState } from "react";
@@ -48,45 +80,62 @@ const BookContextProvider = props => {
 export default BookContextProvider;
 ```
 
-**Components**<br/>
+- bookContext.js (after)
 
-- BookList.js
+```js
+import React, { createContext, useReducer, useEffect } from "react";
+import { bookReducer } from "../reducer/bookReducer";
 
-```js {1,2,6,}
-import React, { useContext } from "react";
-import { BookContext } from "../context/bookContext";
-import BookDetails from "./BookDetails";
+export const BookContext = createContext();
 
-const BookList = () => {
-  const { books } = useContext(BookContext);
-  return books.length ? (
-    // if true
-    <div className="book-list">
-      <ul>
-        {books.map(book => {
-          return <BookDetails book={book} key={book.id} />;
-        })}
-      </ul>
-    </div>
-  ) : (
-    // false
-    <div className="empty">free time mari hibernasi</div>
+const BookContextProvider = props => {
+  // here we go to use dispatch from reducer
+  const [books, dispatch] = useReducer(bookReducer, [], () => {
+    // add saving data in our browser
+    const localData = localStorage.getItem("books");
+    return localData ? JSON.parse(localData) : [];
+  });
+  useEffect(() => {
+    // render data to our localstorage
+    localStorage.setItem("books", JSON.stringify(books));
+  }, [books]);
+  return (
+    <BookContext.Provider value={{ books, dispatch }}>
+      {props.children}
+    </BookContext.Provider>
   );
 };
-export default BookList;
+export default BookContextProvider;
+```
+
+**add dispatch methode**<br/>
+
+- NewBook.js
+
+```js{2,7}
+const NewBook = () => {
+  const { dispatch } = useContext(BookContext);
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const handleSubmit = e => {
+    e.preventDefault();
+    dispatch({ type: "ADD_BOOK", book: { title, author } });
+    setTitle("");
+    setAuthor("");
+  };
 ```
 
 - bookDetails
 
-```js {2,5}
+```js{6,8}
 import React, { useContext } from "react";
 import { BookContext } from "../context/bookContext";
 
 // parsing props book
 const BookDetails = ({ book }) => {
-  const { removeBook } = useContext(BookContext);
+  const { dispatch } = useContext(BookContext);
   return (
-    <li onClick={() => removeBook(book.id)}>
+    <li onClick={() => dispatch({ type: "REMOVE_BOOK", id: book.id })}>
       <div className="title">{book.title}</div>
       <div className="author">{book.author}</div>
     </li>
