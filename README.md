@@ -15,7 +15,8 @@ info lebih lanjut:<br/>
 ### Book-App
 
 ```
-branch: master (basic)
+branch: master (full)
+branch: starter (basic)
 branch: custom (next level)
 ```
 
