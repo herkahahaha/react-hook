@@ -1,72 +1,98 @@
-## React HOC 2019
+# HOOKS Reactjs
 
-### `High Order Component`
+## Intro
 
-this project was my case studies with react HOC and Context API
-but still missing 'useEffect', its fasting cool
-and we also to build custom hooks
+> Reactjs di 2019, maksimal dengan menggunakan Context Api dan High Order Component dalam pendistribusian data setiap component, serta 90% clean code.
+> namun ini dalam bentuk OPTIONAL/pilihan.
 
-[you can learn from here, thenetninja] (https://www.youtube.com/watch?v=6RhOzQciVwI&list=PL4cUxeGkcC9hNokByJilPg5g9m2APUePI)
+info lebih lanjut:<br/>
 
-### `npm start`
+- [reactjs](https://reactjs.org/docs/hooks-intro.html)<br/>
+- [id.reactjs](https://id.reactjs.org/docs/hooks-intro.html)
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Study Kasus
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+### Book-App
 
-### `npm test`
+```
+branch: master (basic)
+branch: custom (next level)
+```
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+**Context**<br/>
 
-### `npm run build`
+- bookContext.js
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```js {4}
+import React, { createContext, useState } from "react";
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+export const BookContext = createContext();
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+const BookContextProvider = props => {
+  const [books, setBooks] = useState([
+    { title: "teman hidup", author: "andaru intan", id: 1 },
+    { title: "tuhan maha asyik", author: "sujiwo tejo", id: 2 }
+  ]);
+  const addBook = (title, author) => {
+    setBooks([...books, { title, author, id: 4 }]);
+  };
+  const removeBook = id => {
+    setBooks(books.filter(book => book.id !== id));
+  };
+  return (
+    <BookContext.Provider value={{ books, addBook, removeBook }}>
+      {props.children}
+    </BookContext.Provider>
+  );
+};
+export default BookContextProvider;
+```
 
-### `npm run eject`
+**Components**<br/>
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- BookList.js
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```js {1,2,6,}
+import React, { useContext } from "react";
+import { BookContext } from "../context/bookContext";
+import BookDetails from "./BookDetails";
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+const BookList = () => {
+  const { books } = useContext(BookContext);
+  return books.length ? (
+    // if true
+    <div className="book-list">
+      <ul>
+        {books.map(book => {
+          return <BookDetails book={book} key={book.id} />;
+        })}
+      </ul>
+    </div>
+  ) : (
+    // false
+    <div className="empty">free time mari hibernasi</div>
+  );
+};
+export default BookList;
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- bookDetails
 
-## Learn More
+```js {2,5}
+import React, { useContext } from "react";
+import { BookContext } from "../context/bookContext";
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+// parsing props book
+const BookDetails = ({ book }) => {
+  const { removeBook } = useContext(BookContext);
+  return (
+    <li onClick={() => removeBook(book.id)}>
+      <div className="title">{book.title}</div>
+      <div className="author">{book.author}</div>
+    </li>
+  );
+};
+export default BookDetails;
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+> merupakan contoh kecil penerapan Context API kepada components yg membuthkan dengan menggunakan HOOKS.
